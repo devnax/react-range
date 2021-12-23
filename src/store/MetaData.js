@@ -1,4 +1,4 @@
-import { is_object, is_array } from "../utils"
+import { is_object, is_array } from "../libs/utils"
 
 export default class MetaData{
     
@@ -18,6 +18,14 @@ export default class MetaData{
         this.onUpdateState({key: false, callback: 'addMetas', type: 'meta'})
     }
 
+    useMeta(key, def){
+        return [
+            this.getMeta(key, def),
+            (value) => {
+                this.addMeta(key, value)
+            }
+        ]
+    }
 
     getMeta(key, def){
         this.onReadState({key, callback: 'getMeta', type: 'meta'})
@@ -79,5 +87,6 @@ export default class MetaData{
 
     deleteAllMeta(){
         this.state.meta_data = {}
+        this.onUpdateState({key: false, callback: 'deleteAllMeta', type: 'meta'})
     }
 }

@@ -1,6 +1,40 @@
-import React from 'react'
-import styles from './styles.module.css'
+import StoreProvider from './components/StoreProvider'
+import withStore from './components/withStore'
+import useStore from './helpers/useStore'
+import {getRootConfigs, useRootStore} from './helpers/rootStore'
 
-export const ExampleComponent = ({ text }) => {
-  return <div className={styles.test}>Example Component: {text}</div>
+import {
+    uid, 
+    is_object, 
+    is_string, 
+    is_array, 
+    in_array, 
+    is_number, 
+    is_callback, 
+    is_callable, 
+    is_define, 
+    is_null
+} from "./libs/utils";
+
+const useConfig = () => getRootConfigs()
+const storeID = () => useRootStore().storeID
+
+
+export {
+    uid, 
+    is_object, 
+    is_string, 
+    is_array, 
+    in_array, 
+    is_number, 
+    is_callback, 
+    is_callable, 
+    is_define, 
+    is_null,
+
+    StoreProvider,
+    withStore,
+    useStore,
+    useConfig,
+    storeID
 }

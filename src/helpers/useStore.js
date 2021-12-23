@@ -1,5 +1,4 @@
-import Store from '../libs/Store'
-import { is_callable } from '../utils'
+import Store from '../store'
 import {initialState, getRootConfigs, dispatchComponents} from './rootStore'
 
 const _stack = {

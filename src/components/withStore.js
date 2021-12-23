@@ -1,8 +1,8 @@
 import React, {useState, useEffect, useMemo } from 'react'
-import Store from '../libs/Store'
+import Store from '../store'
 import {initialState, getRootConfigs, insertReadable, dispatchComponents, deleteReadables} from '../helpers/rootStore'
 import useStore from '../helpers/useStore'
-import { is_callable } from '../utils'
+import { is_callable } from '../libs/utils'
 
 const Render = ({Comp, ...props}) => {
     const [, dispatch] = useState(Math.random().toString())
@@ -27,6 +27,7 @@ const Render = ({Comp, ...props}) => {
                     }
                     insertReadable({storeId: _store.storeID, key, type, dispatch})
                 }
+                
             }, initialState)
 
             setStore(_store)
@@ -41,7 +42,10 @@ const Render = ({Comp, ...props}) => {
         return ''
     }
 
-    return <Comp {...props} store={store} />
+    return <Comp 
+        {...props} 
+        store={store}
+    />
 }
 
 export default (Comp, resolve) => {

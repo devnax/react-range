@@ -1,4 +1,4 @@
-import { is_callable, uid } from "../utils";
+import { is_callable, uid } from "../libs/utils";
 import DataTable from './DataTable'
 
 export default class Store extends DataTable{

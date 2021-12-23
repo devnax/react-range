@@ -1,4 +1,4 @@
-import { is_array, is_callable, is_number, is_object, is_string, uid } from "../utils";
+import { is_array, is_callable, is_number, is_object, is_string, uid } from "../libs/utils";
 import MetaData from './MetaData'
 
 export default class DataRow extends MetaData{

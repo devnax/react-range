@@ -1,4 +1,4 @@
-import Store from '../libs/Store'
+import Store from '../store'
 
 const _rootStore = {
     store: null,
