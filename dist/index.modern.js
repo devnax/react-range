@@ -1,36 +1,183 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import jpath from 'jsonpath';
 
-const uid = () => Math.random().toString(36).substring(2);
-const is_object = (val, or = false) => typeof val === 'object' && val !== null && !Array.isArray(val) ? val : or;
-const is_array = (val, or = false) => typeof val === 'object' && Array.isArray(val) ? val : or;
-const in_array = (item, arr, or = false) => is_array(arr) && arr.indexOf(item) != -1 ? true : or;
-const is_string = (val, or = false) => typeof val === 'string' ? true : or;
-const is_number = (val, or = false) => typeof val === 'number' ? true : or;
-const is_callback = (val, or = false) => typeof val === 'function' ? val : or;
-const is_callable = (val, or = false) => typeof val === 'function' ? val : or;
-const is_define = (val, or = false) => typeof val !== 'undefined' ? val : or;
-const is_null = (val, or = false) => val === null ? true : or;
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
 
-class MetaData {
-  addMeta(key, data) {
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function _inheritsLoose(subClass, superClass) {
+  subClass.prototype = Object.create(superClass.prototype);
+  subClass.prototype.constructor = subClass;
+
+  _setPrototypeOf(subClass, superClass);
+}
+
+function _setPrototypeOf(o, p) {
+  _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
+    o.__proto__ = p;
+    return o;
+  };
+
+  return _setPrototypeOf(o, p);
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+  return arr2;
+}
+
+function _createForOfIteratorHelperLoose(o, allowArrayLike) {
+  var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"];
+  if (it) return (it = it.call(o)).next.bind(it);
+
+  if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
+    if (it) o = it;
+    var i = 0;
+    return function () {
+      if (i >= o.length) return {
+        done: true
+      };
+      return {
+        done: false,
+        value: o[i++]
+      };
+    };
+  }
+
+  throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+var uid = function uid() {
+  return Math.random().toString(36).substring(2);
+};
+var is_object = function is_object(val, or) {
+  if (or === void 0) {
+    or = false;
+  }
+
+  return typeof val === 'object' && val !== null && !Array.isArray(val) ? val : or;
+};
+var is_array = function is_array(val, or) {
+  if (or === void 0) {
+    or = false;
+  }
+
+  return typeof val === 'object' && Array.isArray(val) ? val : or;
+};
+var in_array = function in_array(item, arr, or) {
+  if (or === void 0) {
+    or = false;
+  }
+
+  return is_array(arr) && arr.indexOf(item) != -1 ? true : or;
+};
+var is_string = function is_string(val, or) {
+  if (or === void 0) {
+    or = false;
+  }
+
+  return typeof val === 'string' ? true : or;
+};
+var is_number = function is_number(val, or) {
+  if (or === void 0) {
+    or = false;
+  }
+
+  return typeof val === 'number' ? true : or;
+};
+var is_callback = function is_callback(val, or) {
+  if (or === void 0) {
+    or = false;
+  }
+
+  return typeof val === 'function' ? val : or;
+};
+var is_callable = function is_callable(val, or) {
+  if (or === void 0) {
+    or = false;
+  }
+
+  return typeof val === 'function' ? val : or;
+};
+var is_define = function is_define(val, or) {
+  if (or === void 0) {
+    or = false;
+  }
+
+  return typeof val !== 'undefined' ? val : or;
+};
+var is_null = function is_null(val, or) {
+  if (or === void 0) {
+    or = false;
+  }
+
+  return val === null ? true : or;
+};
+
+var MetaData = /*#__PURE__*/function () {
+  function MetaData() {}
+
+  var _proto = MetaData.prototype;
+
+  _proto.addMeta = function addMeta(key, data) {
     this.state.meta_data[key] = this.formateRow({
       meta_value: data
     });
     this.onUpdateState({
-      key,
+      key: key,
       callback: 'addMeta',
       type: 'meta'
     });
-  }
+  };
 
-  addMetas(metas) {
+  _proto.addMetas = function addMetas(metas) {
     if (!is_object(metas)) {
       return;
     }
 
-    for (let key in metas) {
-      const data = metas[key];
+    for (var key in metas) {
+      var data = metas[key];
       this.state.meta_data[key] = this.formateRow({
         meta_value: data
       });
@@ -41,30 +188,32 @@ class MetaData {
       callback: 'addMetas',
       type: 'meta'
     });
-  }
+  };
 
-  useMeta(key, def) {
-    return [this.getMeta(key, def), value => {
-      this.addMeta(key, value);
+  _proto.useMeta = function useMeta(key, def) {
+    var _this = this;
+
+    return [this.getMeta(key, def), function (value) {
+      _this.addMeta(key, value);
     }];
-  }
+  };
 
-  getMeta(key, def) {
+  _proto.getMeta = function getMeta(key, def) {
     this.onReadState({
-      key,
+      key: key,
       callback: 'getMeta',
       type: 'meta'
     });
-    const meta = this.state.meta_data[key];
+    var meta = this.state.meta_data[key];
 
     if (meta) {
       return meta.meta_value;
     }
 
     return def;
-  }
+  };
 
-  getMetas(keys, def) {
+  _proto.getMetas = function getMetas(keys, def) {
     this.onReadState({
       key: false,
       callback: 'getMetas',
@@ -75,41 +224,42 @@ class MetaData {
       return;
     }
 
-    const metas = {};
+    var metas = {};
 
-    for (let key of keys) {
+    for (var _iterator = _createForOfIteratorHelperLoose(keys), _step; !(_step = _iterator()).done;) {
+      var key = _step.value;
       metas[key] = this.state.meta_data[key] || def;
     }
 
     return metas;
-  }
+  };
 
-  getAllMeta() {
+  _proto.getAllMeta = function getAllMeta() {
     this.onReadState({
       key: false,
       callback: 'getAllMeta',
       type: 'meta'
     });
     return this.state.meta_data;
-  }
+  };
 
-  getMetaInfo(key) {
+  _proto.getMetaInfo = function getMetaInfo(key) {
     this.onReadState({
-      key,
+      key: key,
       callback: 'getMetaInfo',
       type: 'meta'
     });
-    const meta = this.state.meta_data[key];
+    var meta = this.state.meta_data[key];
 
     if (meta) {
       return meta;
     }
-  }
+  };
 
-  observeMeta(key) {
-    const meta = this.state.meta_data[key];
+  _proto.observeMeta = function observeMeta(key) {
+    var meta = this.state.meta_data[key];
     this.onReadState({
-      key,
+      key: key,
       callback: 'observeMeta',
       type: 'meta'
     });
@@ -118,23 +268,24 @@ class MetaData {
       return meta.observe;
     }
 
-    const row = this.formateRow({
+    var row = this.formateRow({
       meta_value: ''
     });
     return row.observe;
-  }
+  };
 
-  deleteMeta(key) {
+  _proto.deleteMeta = function deleteMeta(key) {
     delete this.state.meta_data[key];
     this.onUpdateState({
-      key,
+      key: key,
       callback: 'deleteMeta',
       type: 'meta'
     });
-  }
+  };
 
-  deleteMetas(keys) {
-    for (let key of keys) {
+  _proto.deleteMetas = function deleteMetas(keys) {
+    for (var _iterator2 = _createForOfIteratorHelperLoose(keys), _step2; !(_step2 = _iterator2()).done;) {
+      var key = _step2.value;
       delete this.state.meta_data[key];
     }
 
@@ -143,45 +294,56 @@ class MetaData {
       callback: 'deleteMetas',
       type: 'meta'
     });
-  }
+  };
 
-  deleteAllMeta() {
+  _proto.deleteAllMeta = function deleteAllMeta() {
     this.state.meta_data = {};
     this.onUpdateState({
       key: false,
       callback: 'deleteAllMeta',
       type: 'meta'
     });
+  };
+
+  return MetaData;
+}();
+
+var DataRow = /*#__PURE__*/function (_MetaData) {
+  _inheritsLoose(DataRow, _MetaData);
+
+  function DataRow() {
+    return _MetaData.apply(this, arguments) || this;
   }
 
-}
+  var _proto = DataRow.prototype;
 
-class DataRow extends MetaData {
-  formateRow(row) {
-    let observe = {};
+  _proto.formateRow = function formateRow(row) {
+    var _observe = {};
 
-    let _id = uid();
+    var _id = uid();
 
     if (row.observe) {
       _id = row._id;
-      const prev_observe = row.observe();
-      observe = { ...prev_observe,
+      var prev_observe = row.observe();
+      _observe = _extends({}, prev_observe, {
         updated: Date.now()
-      };
+      });
     } else {
-      observe = {
+      _observe = {
         created: Date.now(),
         updated: Date.now()
       };
     }
 
-    return { ...row,
-      _id,
-      observe: () => observe
-    };
-  }
+    return _extends({}, row, {
+      _id: _id,
+      observe: function observe() {
+        return _observe;
+      }
+    });
+  };
 
-  insert(tb, row) {
+  _proto.insert = function insert(tb, row) {
     if (!this.hasTable(tb) || !is_object(row)) return;
     row = this.formateRow(row);
     this.state.data[tb].rows.push(row);
@@ -191,9 +353,9 @@ class DataRow extends MetaData {
       type: 'data'
     });
     return row;
-  }
+  };
 
-  insertAfter(tb, row, index) {
+  _proto.insertAfter = function insertAfter(tb, row, index) {
     if (!this.hasTable(tb) || !is_object(row)) return;
     row = this.formateRow(row);
 
@@ -209,13 +371,13 @@ class DataRow extends MetaData {
       type: 'data'
     });
     return row;
-  }
+  };
 
-  insertMany(tb, rows) {
+  _proto.insertMany = function insertMany(tb, rows) {
     if (!this.hasTable(tb) || !is_array(rows)) return;
-    const _rows = [];
+    var _rows = [];
 
-    for (let row in rows) {
+    for (var row in rows) {
       row = this.formateRow(row);
       this.state.data[tb].rows.push(row);
 
@@ -228,51 +390,63 @@ class DataRow extends MetaData {
       type: 'data'
     });
     return _rows;
-  }
+  };
 
-  update(tb, row, where, cb = null) {
-    this.query(tb, where, prevRow => {
+  _proto.update = function update(tb, row, where, cb) {
+    var _this = this;
+
+    if (cb === void 0) {
+      cb = null;
+    }
+
+    this.query(tb, where, function (prevRow) {
       if (is_callable(cb)) {
         prevRow = cb(prevRow);
       }
 
-      const fRow = this.formateRow(prevRow);
-      return { ...fRow,
-        ...row,
+      var fRow = _this.formateRow(prevRow);
+
+      return _extends({}, fRow, row, {
         _id: fRow._id
-      };
+      });
     });
     this.onUpdateState({
       key: tb,
       callback: 'update',
       type: 'data'
     });
-  }
+  };
 
-  updateAll(tb, row, cb = null) {
-    this.query(tb, '@', prevRow => {
+  _proto.updateAll = function updateAll(tb, row, cb) {
+    var _this2 = this;
+
+    if (cb === void 0) {
+      cb = null;
+    }
+
+    this.query(tb, '@', function (prevRow) {
       if (is_callable(cb)) {
         prevRow = cb(prevRow);
       }
 
-      const fRow = this.formateRow(prevRow);
-      return { ...fRow,
-        ...row,
+      var fRow = _this2.formateRow(prevRow);
+
+      return _extends({}, fRow, row, {
         _id: fRow._id
-      };
+      });
     });
     this.onUpdateState({
       key: tb,
       callback: 'updateAll',
       type: 'data'
     });
-  }
+  };
 
-  move(tb, oldIdx, newIdx) {
+  _proto.move = function move(tb, oldIdx, newIdx) {
     if (!this.hasTable(tb)) return;
 
     if (!isNaN(oldIdx) && !isNaN(newIdx) && typeof oldIdx === 'number' && typeof newIdx === 'number') {
-      const row = this.state.data[tb].rows[oldIdx];
+      var row = this.state.data[tb].rows[oldIdx];
 
       if (row) {
         this.state.data[tb].rows.splice(oldIdx, 1);
@@ -284,9 +458,9 @@ class DataRow extends MetaData {
         });
       }
     }
-  }
+  };
 
-  count(tb) {
+  _proto.count = function count(tb) {
     if (!this.hasTable(tb)) return;
     this.onReadState({
       key: tb,
@@ -294,24 +468,26 @@ class DataRow extends MetaData {
       type: 'data'
     });
     return this.state.data[tb].rows.length;
-  }
+  };
 
-  delete(tb, where) {
-    this.query(tb, where, () => null);
+  _proto["delete"] = function _delete(tb, where) {
+    this.query(tb, where, function () {
+      return null;
+    });
     this.state.data[tb].rows = this.query(tb, '@');
     this.onUpdateState({
       key: tb,
       callback: 'delete',
       type: 'data'
     });
-  }
+  };
 
-  get(tb, where) {
+  _proto.get = function get(tb, where) {
     if (where === undefined || where === null) {
       return;
     }
 
-    const data = this.query(tb, where);
+    var data = this.query(tb, where);
     this.onReadState({
       key: tb,
       callback: 'get',
@@ -325,11 +501,11 @@ class DataRow extends MetaData {
     }
 
     return data.length ? data : false;
-  }
+  };
 
-  getIndex(tb, id) {
+  _proto.getIndex = function getIndex(tb, id) {
     if (!id) return;
-    const data = this.queryNodes(tb, id);
+    var data = this.queryNodes(tb, id);
 
     if (data && data.length) {
       this.onReadState({
@@ -339,55 +515,68 @@ class DataRow extends MetaData {
       });
       return data[0].path[1];
     }
-  }
+  };
 
-  getAll(tb) {
+  _proto.getAll = function getAll(tb) {
     this.onReadState({
       key: tb,
       callback: 'getAll',
       type: 'data'
     });
     return this.query(tb, '@');
+  };
+
+  return DataRow;
+}(MetaData);
+
+var DataTable = /*#__PURE__*/function (_DataRow) {
+  _inheritsLoose(DataTable, _DataRow);
+
+  function DataTable() {
+    return _DataRow.apply(this, arguments) || this;
   }
 
-}
+  var _proto = DataTable.prototype;
 
-class DataTable extends DataRow {
-  queryExpression(ex) {
-    let _q;
+  _proto.queryExpression = function queryExpression(ex) {
+    var _q;
 
     if (is_number(ex)) {
-      _q = `$[${ex}]`;
+      _q = "$[" + ex + "]";
     } else if (is_string(ex)) {
       if (ex.charAt(0) == '@') {
-        _q = `$[?(${ex})]`;
+        _q = "$[?(" + ex + ")]";
       } else {
-        _q = `$[?(@._id=='${ex}')]`;
+        _q = "$[?(@._id=='" + ex + "')]";
       }
     } else if (is_object(ex)) {
-      let _and = "";
-      let fex = '';
+      var _and = "";
+      var fex = '';
 
-      for (let k in ex) {
-        let v = ex[k];
+      for (var k in ex) {
+        var v = ex[k];
 
         if (is_string(ex[k])) {
-          v = `'${ex[k]}'`;
+          v = "'" + ex[k] + "'";
         }
 
-        fex += `${_and}@.${k}==${v}`;
+        fex += _and + "@." + k + "==" + v;
         _and = '&&';
       }
 
-      _q = `$[?(${fex})]`;
+      _q = "$[?(" + fex + ")]";
     } else {
-      _q = `$[?(@)]`;
+      _q = "$[?(@)]";
     }
 
     return _q;
-  }
+  };
 
-  query(tb, jpQuery, cb = null) {
+  _proto.query = function query(tb, jpQuery, cb) {
+    if (cb === void 0) {
+      cb = null;
+    }
+
     try {
       if (is_callable(cb)) {
         return jpath.apply(this.state.data[tb].rows, this.queryExpression(jpQuery), cb);
@@ -397,23 +586,23 @@ class DataTable extends DataRow {
     } catch (err) {
       console.error("PARSE ERROR");
     }
-  }
+  };
 
-  queryNodes(tb, jpQuery) {
+  _proto.queryNodes = function queryNodes(tb, jpQuery) {
     try {
       return jpath.nodes(this.state.data[tb].rows, this.queryExpression(jpQuery));
     } catch (err) {
       console.error("PARSE ERROR");
     }
-  }
+  };
 
-  updateTableInfo(tb) {
+  _proto.updateTableInfo = function updateTableInfo(tb) {
     if (!this.hasTable(tb)) return;
     this.state.data[tb].info.updated = Date.now();
     this.state.data[tb].info.length = Object.keys(this.state.data[tb].rows).length;
-  }
+  };
 
-  createTable(tb) {
+  _proto.createTable = function createTable(tb) {
     this.state.data[tb] = {
       info: {
         created: Date.now(),
@@ -421,42 +610,47 @@ class DataTable extends DataRow {
       },
       rows: []
     };
-  }
+  };
 
-  hasTable(tb) {
+  _proto.hasTable = function hasTable(tb) {
     return this.state.data[tb] ? true : false;
-  }
+  };
 
-  dropTable(tb) {
+  _proto.dropTable = function dropTable(tb) {
     delete this.state.data[tb];
-  }
+  };
 
-  tableInfo(tb) {
+  _proto.tableInfo = function tableInfo(tb) {
     return this.state.data[tb].info;
-  }
+  };
 
-  observeTable(tb) {
+  _proto.observeTable = function observeTable(tb) {
     return this.state.data[tb].info.updated;
-  }
+  };
 
-}
+  return DataTable;
+}(DataRow);
 
-class Store extends DataTable {
-  constructor(settings, intialState) {
-    super();
-    this.storeID = "_" + uid();
-    this.state_info = {
+var Store = /*#__PURE__*/function (_DataTable) {
+  _inheritsLoose(Store, _DataTable);
+
+  function Store(settings, intialState) {
+    var _this;
+
+    _this = _DataTable.call(this) || this;
+    _this.storeID = "_" + uid();
+    _this.state_info = {
       created: Date.now(),
       updated: Date.now()
     };
-    this.settings = {
+    _this.settings = {
       tables: [],
       keys: {},
       methods: {},
-      onUpdate: () => {},
-      onRead: () => {}
+      onUpdate: function onUpdate() {},
+      onRead: function onRead() {}
     };
-    this.assignableTableMethods = [{
+    _this.assignableTableMethods = [{
       name: 'insert$table',
       method: 'insert'
     }, {
@@ -493,103 +687,126 @@ class Store extends DataTable {
       name: 'observe$table',
       method: 'observeTable'
     }];
-    this.state = intialState;
-    this.settingFormate(settings);
-    this.assignTables();
-    this.assignMethods();
-    this.keys = this.settings.keys;
-    this.tables = this.settings.tables;
+    _this.state = intialState;
+
+    _this.settingFormate(settings);
+
+    _this.assignTables();
+
+    _this.assignMethods();
+
+    _this.keys = _this.settings.keys;
+    _this.tables = _this.settings.tables;
+    return _this;
   }
 
-  settingFormate(settings) {
-    for (let s in this.settings) {
+  var _proto = Store.prototype;
+
+  _proto.settingFormate = function settingFormate(settings) {
+    for (var s in this.settings) {
       if (settings[s]) {
         this.settings[s] = settings[s];
       }
     }
-  }
+  };
 
-  assignTables() {
-    const {
-      tables
-    } = this.settings;
+  _proto.assignTables = function assignTables() {
+    var _this2 = this;
 
-    for (let tb of tables) {
-      this.createTable(tb);
+    var tables = this.settings.tables;
 
-      for (let {
-        name,
-        method
-      } of this.assignableTableMethods) {
+    var _loop = function _loop() {
+      var tb = _step.value;
+
+      _this2.createTable(tb);
+
+      var _loop2 = function _loop2() {
+        var _step2$value = _step2.value,
+            name = _step2$value.name,
+            method = _step2$value.method;
         name = name.replace('$table', tb);
 
-        if (!this[name]) {
-          this[name] = (...args) => {
-            return this[method](tb, ...args);
+        if (!_this2[name]) {
+          _this2[name] = function () {
+            for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+              args[_key] = arguments[_key];
+            }
+
+            return _this2[method].apply(_this2, [tb].concat(args));
           };
         }
+      };
+
+      for (var _iterator2 = _createForOfIteratorHelperLoose(_this2.assignableTableMethods), _step2; !(_step2 = _iterator2()).done;) {
+        _loop2();
       }
+    };
+
+    for (var _iterator = _createForOfIteratorHelperLoose(tables), _step; !(_step = _iterator()).done;) {
+      _loop();
     }
-  }
+  };
 
-  assignMethods() {
-    const {
-      methods
-    } = this.settings;
+  _proto.assignMethods = function assignMethods() {
+    var _this3 = this;
 
-    for (let name in methods) {
-      if (!this[name] && is_callable(methods[name])) {
-        this[name] = (...args) => {
-          return methods[name].apply(this, args);
+    var methods = this.settings.methods;
+
+    var _loop3 = function _loop3(name) {
+      if (!_this3[name] && is_callable(methods[name])) {
+        _this3[name] = function () {
+          for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+            args[_key2] = arguments[_key2];
+          }
+
+          return methods[name].apply(_this3, args);
         };
       }
+    };
+
+    for (var name in methods) {
+      _loop3(name);
     }
-  }
+  };
 
-  storeInfo() {
+  _proto.storeInfo = function storeInfo() {
     return this.state_info;
-  }
+  };
 
-  onUpdateState(info) {
+  _proto.onUpdateState = function onUpdateState(info) {
     this.state_info.updated = Date.now();
     this.updateTableInfo(info.key);
-    const {
-      onUpdate
-    } = this.settings;
+    var onUpdate = this.settings.onUpdate;
 
     if (is_callable(onUpdate)) {
       onUpdate(info);
     }
-  }
+  };
 
-  onReadState(info) {
-    const {
-      onRead
-    } = this.settings;
+  _proto.onReadState = function onReadState(info) {
+    var onRead = this.settings.onRead;
 
     if (is_callable(onRead)) {
       onRead(info);
     }
-  }
+  };
 
-  getKey(name) {
-    const {
-      keys
-    } = this.settings;
+  _proto.getKey = function getKey(name) {
+    var keys = this.settings.keys;
 
     if (keys[name]) {
       return keys[name];
     }
-  }
+  };
 
-  getState() {
-    let state = {
+  _proto.getState = function getState() {
+    var state = {
       data: {},
       meta_data: this.state.meta_data
     };
 
-    for (let tb in this.state.data) {
-      this.query(tb, '@', row => {
+    for (var tb in this.state.data) {
+      this.query(tb, '@', function (row) {
         delete row.info;
         delete row.isUpdate;
         return row;
@@ -598,38 +815,37 @@ class Store extends DataTable {
     }
 
     return state;
-  }
+  };
 
-}
+  return Store;
+}(DataTable);
 
-const _rootStore = {
+var _rootStore = {
   store: null,
   configs: {}
 };
-const initialState = {
+var initialState = {
   data: {},
   meta_data: {}
 };
-const initRootStore = configs => {
+var initRootStore = function initRootStore(configs) {
   if (_rootStore.store) return;
   _rootStore.configs = configs;
   _rootStore.store = new Store({
     tables: ['Readables']
   }, initialState);
 };
-const getRootConfigs = () => {
+var getRootConfigs = function getRootConfigs() {
   return _rootStore.configs;
 };
-const useRootStore = () => {
+var useRootStore = function useRootStore() {
   return _rootStore.store;
 };
-const dispatchComponents = ({
-  fromRoot,
-  key,
-  type
-}) => {
-  let readables = [];
-  const rootStore = _rootStore.store;
+var dispatchComponents = function dispatchComponents(_ref) {
+  var key = _ref.key,
+      type = _ref.type;
+  var readables = [];
+  var rootStore = _rootStore.store;
 
   if (type === 'meta') {
     if (!key) {
@@ -639,20 +855,22 @@ const dispatchComponents = ({
     } else {
       readables = rootStore.getReadables({
         type: 'meta',
-        key
+        key: key
       });
     }
   } else if (type === 'data') {
     readables = rootStore.getReadables({
       type: 'data',
-      key
+      key: key
     });
   }
 
-  const dispatches = [];
+  var dispatches = [];
 
   if (readables) {
-    for (let readable of readables) {
+    for (var _iterator = _createForOfIteratorHelperLoose(readables), _step; !(_step = _iterator()).done;) {
+      var readable = _step.value;
+
       if (!dispatches.includes(readable.compId)) {
         if (readable.compId) {
           readable.dispatch();
@@ -663,114 +881,122 @@ const dispatchComponents = ({
     }
   }
 };
-const insertReadable = ({
-  storeId,
-  key,
-  type,
-  dispatch
-}) => {
-  const rootStore = _rootStore.store;
-  const exists = rootStore.getReadables({
+var insertReadable = function insertReadable(_ref2) {
+  var storeId = _ref2.storeId,
+      key = _ref2.key,
+      type = _ref2.type,
+      _dispatch = _ref2.dispatch;
+  var rootStore = _rootStore.store;
+  var exists = rootStore.getReadables({
     compId: storeId,
-    key,
-    type
+    key: key,
+    type: type
   });
 
   if (!exists) {
     rootStore.insertReadables({
-      dispatch: () => dispatch(Math.random()),
+      dispatch: function dispatch() {
+        return _dispatch(Math.random());
+      },
       compId: storeId,
-      key,
-      type
+      key: key,
+      type: type
     });
   }
 };
-const deleteReadables = storeId => {
-  const rootStore = _rootStore.store;
+var deleteReadables = function deleteReadables(storeId) {
+  var rootStore = _rootStore.store;
   rootStore.deleteReadables({
     compId: storeId
   });
 };
 
-const _stack = {
+var _excluded = ["key", "type", "callback"];
+var _stack = {
   store: null,
   configs: {}
 };
-var useStore = (() => {
+var useStore = (function () {
   if (_stack.store) return _stack.store;
-  const configs = getRootConfigs();
-  _stack.store = new Store({ ...configs,
-    onUpdate: ({
-      key,
-      type,
-      callback,
-      ...rest
-    }) => {
+  var configs = getRootConfigs();
+  _stack.store = new Store(_extends({}, configs, {
+    onUpdate: function onUpdate(_ref) {
+      var key = _ref.key,
+          type = _ref.type,
+          rest = _objectWithoutPropertiesLoose(_ref, _excluded);
+
       dispatchComponents({
-        key,
-        type
+        key: key,
+        type: type
       });
     },
-    onRead: () => {}
-  }, initialState);
+    onRead: function onRead() {}
+  }), initialState);
   return _stack.store;
 });
 
-const Render = ({
-  Comp,
-  ...props
-}) => {
-  const [, dispatch] = useState(Math.random().toString());
-  const [store, setStore] = useState(false);
-  const rootConfigs = getRootConfigs();
-  useEffect(() => {
-    let _store = store;
+var _excluded$1 = ["Comp"],
+    _excluded2 = ["key", "type"],
+    _excluded3 = ["key", "type"];
+
+var Render = function Render(_ref) {
+  var Comp = _ref.Comp,
+      props = _objectWithoutPropertiesLoose(_ref, _excluded$1);
+
+  var _useState = useState(Math.random().toString()),
+      dispatch = _useState[1];
+
+  var _useState2 = useState(false),
+      store = _useState2[0],
+      setStore = _useState2[1];
+
+  var rootConfigs = getRootConfigs();
+  useEffect(function () {
+    var _store = store;
 
     if (!store) {
-      _store = new Store({ ...rootConfigs,
-        onUpdate: ({
-          key,
-          type,
-          ...rest
-        }) => {
+      _store = new Store(_extends({}, rootConfigs, {
+        onUpdate: function onUpdate(_ref2) {
+          var key = _ref2.key,
+              type = _ref2.type,
+              rest = _objectWithoutPropertiesLoose(_ref2, _excluded2);
+
           if (is_callable(rootConfigs.onUpdate)) {
-            rootConfigs.onUpdate({
-              key,
-              type,
-              ...rest
-            });
+            rootConfigs.onUpdate(_extends({
+              key: key,
+              type: type
+            }, rest));
           }
 
           dispatchComponents({
-            key,
-            type
+            key: key,
+            type: type
           });
         },
-        onRead: ({
-          key,
-          type,
-          ...rest
-        }) => {
+        onRead: function onRead(_ref3) {
+          var key = _ref3.key,
+              type = _ref3.type,
+              rest = _objectWithoutPropertiesLoose(_ref3, _excluded3);
+
           if (is_callable(rootConfigs.onRead)) {
-            rootConfigs.onRead({
-              key,
-              type,
-              ...rest
-            });
+            rootConfigs.onRead(_extends({
+              key: key,
+              type: type
+            }, rest));
           }
 
           insertReadable({
             storeId: _store.storeID,
-            key,
-            type,
-            dispatch
+            key: key,
+            type: type,
+            dispatch: dispatch
           });
         }
-      }, initialState);
+      }), initialState);
       setStore(_store);
     }
 
-    return () => {
+    return function () {
       deleteReadables(_store.storeID);
     };
   }, []);
@@ -779,40 +1005,48 @@ const Render = ({
     return '';
   }
 
-  return /*#__PURE__*/React.createElement(Comp, Object.assign({}, props, {
+  return /*#__PURE__*/React.createElement(Comp, _extends({}, props, {
     store: store
   }));
 };
 
-var withStore = ((Comp, resolve) => {
+var withStore = (function (Comp, resolve) {
   if (typeof resolve === 'function') {
-    return props => {
-      let store = useStore();
-      let deps = resolve({ ...props,
-        store
-      });
+    return function (props) {
+      var store = useStore();
+      var deps = resolve(_extends({}, props, {
+        store: store
+      }));
       deps = deps ? deps : props;
-      return useMemo(() => /*#__PURE__*/React.createElement(Render, Object.assign({}, deps, props, {
-        Comp: Comp
-      })), Object.values(deps));
+      return useMemo(function () {
+        return /*#__PURE__*/React.createElement(Render, _extends({}, deps, props, {
+          Comp: Comp
+        }));
+      }, Object.values(deps));
     };
   }
 
-  return props => /*#__PURE__*/React.createElement(Render, Object.assign({}, props, {
-    Comp: Comp
-  }));
+  return function (props) {
+    return /*#__PURE__*/React.createElement(Render, _extends({}, props, {
+      Comp: Comp
+    }));
+  };
 });
 
-const createStore = (Comp, configs) => {
+var createStore = function createStore(Comp, configs) {
   initRootStore(configs);
-  return withStore(props => {
+  return withStore(function (props) {
     return /*#__PURE__*/React.createElement(Comp, props);
   });
 };
 
-const useConfig = () => getRootConfigs();
+var useConfig = function useConfig() {
+  return getRootConfigs();
+};
 
-const storeID = () => useRootStore().storeID;
+var storeID = function storeID() {
+  return useRootStore().storeID;
+};
 
 export { createStore, in_array, is_array, is_callable, is_callback, is_define, is_null, is_number, is_object, is_string, storeID, uid, useConfig, useStore, withStore };
 //# sourceMappingURL=index.modern.js.map
