@@ -1,14 +1,14 @@
-# react-range
+# react-rock
 
-> Build powerful React apps that scale from hundreds to tens of thousands of records and remain fast ⚡️. react-range is a powerfull state management lib for React. It's very simple and easy to manage your React App.
+> Build powerful React apps that scale from hundreds to tens of thousands of records and remain fast ⚡️. react-rock is a powerfull state management lib for React. It's very simple and easy to manage your React App.
 
-[![NPM](https://img.shields.io/npm/v/react-range.svg)](https://www.npmjs.com/package/react-range) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![NPM](https://img.shields.io/npm/v/react-rock.svg)](https://www.npmjs.com/package/react-rock) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 ## Installation
-To use React Range with your React app, install it as a dependency:
+To use React Rock with your React app, install it as a dependency:
 
 ```bash
-npm install --save react-range
+npm install --save react-rock
 ```
 
 
@@ -17,7 +17,7 @@ npm install --save react-range
 ## Initial the store 
 
 ```jsx
-import {StoreProvider} from 'react-range'
+import {createStore} from 'react-rock'
 
 const config = {
   tables: ['Posts', 'Users'], 
@@ -29,14 +29,14 @@ const config = {
 const App = () => {
   
   return (
-    <StoreProvider>
+    <div>
         ....
-    </StoreProvider>
+    </div>
   )
 }
 
 
-ReactDOM.render(<App />, document.getElementById('root'))
+ReactDOM.render(createStore(App), document.getElementById('root'))
 
 ```
 
@@ -45,14 +45,14 @@ ReactDOM.render(<App />, document.getElementById('root'))
 
 
 
-## React Range core concept
+## React Rock core concept
 
 
 
 ### useStore
 
 ```jsx
-import {withStore, useStore} from 'react-range'
+import {withStore, useStore} from 'react-rock'
 
 // custom action handler 
 const createPost = () => {
@@ -80,7 +80,7 @@ export default withStore(Comp)
 ### withStore
 
 ```jsx
-import {withStore, useStore} from 'react-range'
+import {withStore, useStore} from 'react-rock'
 
 // custom action handler 
 const createPost = () => {
@@ -113,7 +113,7 @@ useConfig - get the store config
 storeID - get the store unique ID
 
 ```jsx
-import {useConfig, storeID} from 'react-range'
+import {useConfig, storeID} from 'react-rock'
 
 const Comp = () => {
   const config = useConfig()
@@ -308,7 +308,7 @@ store.dropTable(tablename)
 // read the table info
 store.tableInfo(tablename)
 
-// get the table create and update date and also get the rows length
+// read the create and update time from the table
 store.tableInfo(tablename)
 
 
@@ -361,7 +361,7 @@ How action work
 
 ```js
 // action.js
-import {useStore} from 'react-range'
+import {useStore} from 'react-rock'
 export const clickHandle = () => {
   const store = useStore()
 
@@ -371,7 +371,7 @@ export const clickHandle = () => {
 
 
 // button.js
-import {useStore} from 'react-range'
+import {useStore} from 'react-rock'
 import {clickHandle} from 'action'
 
 const Button = () => {
@@ -398,7 +398,7 @@ import {
     is_null,
     is_empty,
     getVal, 
-} from 'react-range'
+} from 'react-rock'
 
 is_obeject(obj, def) // return obj or def 
 is_string(str, def) // return true or def 

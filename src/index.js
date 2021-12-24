@@ -1,4 +1,4 @@
-import StoreProvider from './components/StoreProvider'
+import createStore from './components/createStore'
 import withStore from './components/withStore'
 import useStore from './helpers/useStore'
 import {getRootConfigs, useRootStore} from './helpers/rootStore'
@@ -32,7 +32,7 @@ export {
     is_define, 
     is_null,
 
-    StoreProvider,
+    createStore,
     withStore,
     useStore,
     useConfig,

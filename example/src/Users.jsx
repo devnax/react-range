@@ -4,7 +4,6 @@ import { withStore } from 'react-range'
 
 const Users = ({store}) => {
     const posts = store.getAllPosts()
-    console.log("I Am from Users");
 
 
     return (

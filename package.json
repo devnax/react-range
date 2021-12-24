@@ -1,5 +1,5 @@
 {
-  "name": "react-range",
+  "name": "react-rock",
   "version": "1.0.0",
   "description": "React State Management System",
   "author": "devnax",
@@ -51,6 +51,7 @@
     "dist"
   ],
   "dependencies": {
-    "jsonpath": "^1.1.1"
+    "jsonpath": "^1.1.1",
+    "jsonpath-plus": "^6.0.1"
   }
 }

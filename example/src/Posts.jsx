@@ -5,12 +5,11 @@ import {withStore, storeID, useConfig} from 'react-range'
 
 const Form = withStore(({store}) => {
     const [meta, setMeta] = store.useMeta('posts_data', {})
-    console.log(useConfig())
 
     return <div>
         <input type="text" onChange={(e) => setMeta({ title: e.target.value })} />
         <button onClick={(e) => {
-            store.insertPosts({name: "nax"})
+            store.insertPosts({title: meta.title})
         }}>Add</button>
     </div>
 }, () => ({}))
@@ -18,7 +17,7 @@ const Form = withStore(({store}) => {
 
 
 const Posts = ({store}) => {
-    // const posts = store.getAllPosts()
+    const posts = store.getAllPosts()
     const meta = store.getMeta('posts_data')
     // console.log(meta);
     
@@ -29,7 +28,7 @@ const Posts = ({store}) => {
             <div>
                 <ul>
                     {
-                       // posts.map((post, idx) => <li key={idx}>{post.title}</li>)
+                       posts.map((post, idx) => <li key={idx}>{post.title}</li>)
                     }
                     
                 </ul>
